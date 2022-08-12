@@ -1,6 +1,3 @@
 {
-  "window.zoomLevel": 0,
-  "vscode_custom_css.imports": [
-    "file:///C:/Users/Mustafa/.vscode/extensions/webrender.synthwave-x-fluoromachine-0.0.12/synthwave-x-fluoromachine.css"
-    ]
+  "window.zoomLevel": 0
 }

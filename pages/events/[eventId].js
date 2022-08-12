@@ -1,15 +1,33 @@
-import { getEventById, getFeaturedEvents } from "../../helpers/api-util";
+import { Fragment } from 'react';
+import Head from 'next/head';
 
-import EventSummary from "../../components/event-detail/eventSummary";
-import EventLogistics from "../../components/event-detail/eventLogistics";
-import EventContent from "../../components/event-detail/eventContent";
+import { getEventById, getFeaturedEvents } from '../../helpers/api-util';
+import EventSummary from '../../components/event-detail/event-summary';
+import EventLogistics from '../../components/event-detail/event-logistics';
+import EventContent from '../../components/event-detail/event-content';
+import ErrorAlert from '../../components/ui/error-alert';
+import Comments from '../../components/input/comments';
 
-const EventPage = ({ event }) => {
+function EventDetailPage(props) {
+  const event = props.selectedEvent;
+
   if (!event) {
-    return <div>No event id provided</div>;
+    return (
+      <div className="center">
+        <p>Loading...</p>
+      </div>
+    );
   }
+
   return (
-    <>
+    <Fragment>
+      <Head>
+        <title>{event.title}</title>
+        <meta
+          name='description'
+          content={event.description}
+        />
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics
         date={event.date}
@@ -20,9 +38,10 @@ const EventPage = ({ event }) => {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
-    </>
+      <Comments eventId={event.id} />
+    </Fragment>
   );
-};
+}
 
 export async function getStaticProps(context) {
   const eventId = context.params.eventId;
@@ -31,23 +50,21 @@ export async function getStaticProps(context) {
 
   return {
     props: {
-      event,
+      selectedEvent: event
     },
     revalidate: 30
   };
 }
 
 export async function getStaticPaths() {
-
   const events = await getFeaturedEvents();
 
-  const paths = events.map((event) => ({params: {eventId: event.id}}))
-  console.log(paths);
+  const paths = events.map(event => ({ params: { eventId: event.id } }));
 
   return {
-    paths,
-    fallback: 'blocking',
+    paths: paths,
+    fallback: 'blocking'
   };
 }
 
-export default EventPage;
+export default EventDetailPage;
